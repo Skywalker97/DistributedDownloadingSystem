@@ -14,18 +14,19 @@ import android.util.Log;
 public class SQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME="Downloads";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_INFO = "Download_Info";
     public static final String COLUMN_ID = "Id";
     public static final String COLUMN_FILENAME = "FileName";
-    //public static final String COLUMN_EXT = "Extension";
+    public static final String COLUMN_EXT = "Extension";
     public static final String COLUMN_URL = "URL";
     public static final String COLUMN_KEY = "Key";
     public static final String COLUMN_isADMIN="isAdmin";
-   // public static final String COLUMN_STATUS="Status";
-    //public static final String COLUMN_REASON = "Reason"
-    //private String[] allColumns = { COLUMN_ID, COLUMN_FILENAME, COLUMN_URL, COLUMN_KEY, COLUMN_isADMIN};
+    public static final String COLUMN_STATUS="Status";
+   public static final String COLUMN_REASON = "Reason";
+           public static final String COLUMN_PartCount = "PartCount";
+   //private String[] allColumns = { COLUMN_ID, COLUMN_FILENAME, COLUMN_URL, COLUMN_KEY, COLUMN_isADMIN};
 
 
     private static final String DATABASE_CREATE = "create table "
@@ -33,8 +34,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + " integer primary key autoincrement, " + COLUMN_FILENAME
             + " text not null, " + COLUMN_URL
 
-            + " text not null, " + COLUMN_isADMIN + " integer not null, "
-            + COLUMN_KEY  + " text not null" + ");";
+            + " text not null, " + COLUMN_EXT +" text, " + COLUMN_STATUS + " text, " + COLUMN_REASON + " text, " + COLUMN_PartCount + " text, "  + COLUMN_isADMIN + " integer, "
+            + COLUMN_KEY  + " text not null" +  ");";
 
 
     public SQLiteHelper(Context context) {
@@ -71,8 +72,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_FILENAME,DI.getFileName());
         values.put(COLUMN_URL, DI.getURL());
 
-         values.put(COLUMN_isADMIN,DI.getAdmin());
+       //  values.put(COLUMN_isADMIN,DI.getAdmin());
         values.put(COLUMN_KEY, DI.getKey());
+        values.put(COLUMN_EXT, DI.getExtension());
 
         db.insert(TABLE_INFO, null, values);
         db.close();

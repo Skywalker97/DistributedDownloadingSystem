@@ -12,9 +12,6 @@ import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.List;
 
-import avinash.distributeddownloadingsystem.Database.Download_Info;
-import avinash.distributeddownloadingsystem.Database.SQLiteHelper;
-
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -36,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        Download_Info a = new Download_Info( "setup.exe", "www.xyz.org/pqr", 1,"dnandnd2");
+       /* Download_Info a = new Download_Info( "setup.exe", "www.xyz.org/pqr", 1,"dnandnd2");
         Download_Info c= new Download_Info( "abc.apk", "www.xyz.org/pqn", 1,"adsdx");
 
         SQLiteHelper sq = new SQLiteHelper(this);
 
         sq.addRow(a);
-        sq.addRow(c);
+        sq.addRow(c);*/
     }
 
     private void setupViewPager(ViewPager viewPager) {

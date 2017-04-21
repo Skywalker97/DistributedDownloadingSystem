@@ -169,6 +169,7 @@ public class ManageDownloads extends Fragment {
                     i.putExtra("Admin",obj.getAdmin());
                     i.putExtra("File",obj.getFileName());
                     i.putExtra("URL",obj.getURL());
+                    i.putExtra("PartCount",obj.getPartCount());
 
                     startActivity(i);
 

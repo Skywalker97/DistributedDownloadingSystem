@@ -1,7 +1,7 @@
 package avinash.distributeddownloadingsystem;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,16 +9,12 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import avinash.distributeddownloadingsystem.Database.SQLiteHelper;
-
-import static avinash.distributeddownloadingsystem.Database.SQLiteHelper.COLUMN_KEY;
-
-
+import android.widget.Toast;
 
 
 /**
@@ -26,7 +22,7 @@ import static avinash.distributeddownloadingsystem.Database.SQLiteHelper.COLUMN_
  */
 
 public class Download_Details extends AppCompatActivity {
-    String key, filename, URL;
+    String key, filename, URL, partCount;
     int admin;
     String [] list;
     CardView CV;
@@ -38,6 +34,7 @@ public class Download_Details extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
          key = extras.getString("Key");
          admin = extras.getInt("Admin");
+        partCount = extras.getString("PartCount");
         filename = extras.getString("File");
         URL = extras.getString("URL");
         CV = (CardView) findViewById(R.id.CV);
@@ -53,46 +50,44 @@ public class Download_Details extends AppCompatActivity {
 
         ListView LV = (ListView)  findViewById(R.id.lv);
         LV.setAdapter(adapter);
-      /*  LV.setOnItemClickListener(new OnItemClickListener()
-        {    @Override
-        public void onItemClick(AdapterView<?> a, View v, int position,
-                                long id) {
 
-            String str = key.getText().toString();
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Html.fromHtml(str));
-            Intent chooser =Intent.createChooser(sharingIntent, " Share Using");
-            if(sharingIntent.resolveActivity(getPackageManager())!=null)
-                startActivity(chooser);
-            else
-            {
-                Toast.makeText(MainActivity.this,"Cannot Share", Toast.LENGTH_LONG).show();
-            }
 
-            startActivity(intent);
-        }
 
-        });*/
+
+
+        LV.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    @Override
+
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String KEY = String.valueOf(parent.getItemAtPosition(position));
+
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, "Download Link for " + filename + ": " + URL + " Download Key: " + KEY);
+                        Intent chooser =Intent.createChooser(sharingIntent, " Share Using");
+                        if(sharingIntent.resolveActivity(getPackageManager())!=null) {
+                            startActivity(chooser);
+                            Toast.makeText(Download_Details.this, "Download Key has been shared.", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                            Toast.makeText(Download_Details.this,"Cannot Share", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        );
 
 
     }
 
     public void getList()
-    { SQLiteHelper sq = new SQLiteHelper(this);
-        Cursor c = sq.getKeys(key);
-        c.moveToFirst();
-        int count = c.getCount();
-        list = new String[count];
-        int i=0;
-        while(!c.isAfterLast())
+    {
+        //int s=Integer.parseInt(partCount);
+        list = new String[4];
+        for(int i=0;i<4; i++)
         {
-            String l =c.getString(c.getColumnIndex(COLUMN_KEY));
-            list[i] = l;
-            ++i;
-            c.moveToNext();
+            list[i] = key + String.valueOf(i);
         }
-        c.close();
     }
     class CustomAdapter extends ArrayAdapter<String> {
         public CustomAdapter(Context context, String[] keys) {
@@ -114,7 +109,4 @@ public class Download_Details extends AppCompatActivity {
             return customView;
         }
     }
-
-
-
 }

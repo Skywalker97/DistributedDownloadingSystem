@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import avinash.distributeddownloadingsystem.Database.Download_Info;
 import avinash.distributeddownloadingsystem.Database.SQLiteHelper;
 
 public class InitiateDownload extends Fragment {
@@ -42,44 +43,9 @@ public class InitiateDownload extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      /*  setContentView(R.layout.download_initiate);
-        context=this;
-        et_url = (EditText) findViewById(R.id.link);
-        et_numOfRequests = (EditText) findViewById(R.id.key);
-        download = (Button) findViewById(R.id.download);
-        progressDialog = new ProgressDialog(context);
 
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("listener","called");
-                if(!et_url.getText().toString().contains(" ")&&
-                        !et_numOfRequests.getText().toString().contains(" ")&&
-                        !et_url.getText().toString().equals("")&&
-                        !et_numOfRequests.getText().toString().equals(""))
-                {
-                    url = et_url.getText().toString();
-                    numOfRequests = Integer.parseInt(et_numOfRequests.getText().toString());
-
-                    progressDialog.setMessage("Please wait...");
-                    progressDialog.show();
-                    progressDialog.setCancelable(false);
-                    Log.i("make request","called");
-                    makeRequest();
-                    progressDialog.dismiss();
-                }
-                else
-                {
-                    if(et_url.getText().toString().contains(" ")||et_url.getText().toString().equals("")){
-                        et_url.setError("enter a valid url!");
-                    }
-                    if(et_numOfRequests.getText().toString().contains(" ")||et_numOfRequests.getText().toString().equals("")){
-                        et_numOfRequests.setError("enter a valid number");
-                    }
-                }
-            }
-        });*/
     }
+
 
     @Nullable
     @Override
@@ -89,7 +55,7 @@ public class InitiateDownload extends Fragment {
         View view = inflater.inflate(R.layout.download_initiate, container, false);
         context=view.getContext();
         et_url = (EditText) view.findViewById(R.id.link);
-        et_numOfRequests = (EditText) view.findViewById(R.id.key);
+        et_numOfRequests = (EditText) view.findViewById(R.id.editText2);
         download = (Button) view.findViewById(R.id.download);
         progressDialog = new ProgressDialog(context);
         sq=new SQLiteHelper(view.getContext());
@@ -143,12 +109,31 @@ public class InitiateDownload extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(context,"Hell yeah!"+response.toString(),Toast.LENGTH_SHORT).show();
+                        String name, ext, id, partCount;
+                        try {
+                           // Download_Info DI(response.getString("name"), response.getString("ext"), response.getString("_id"));
+                             name = response.getString("name");
+                             ext = response.getString("ext");
+                             id = response.getString("_id");
+
+
+                            Download_Info DI= new Download_Info(name,ext,et_url.getText().toString(), et_numOfRequests.getText().toString(),id);
+                            sq.addRow(DI);
+
+                        }catch (Exception e){e.printStackTrace();}
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("error listener called",error.getMessage());
+                        try {
+                            Log.i("error listener called",error.getMessage());
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("error",e.getMessage());
+                        }
                         Toast.makeText(context,"fuck no",Toast.LENGTH_SHORT).show();
                     }
                 });
