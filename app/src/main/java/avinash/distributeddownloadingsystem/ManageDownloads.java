@@ -3,6 +3,7 @@ package avinash.distributeddownloadingsystem;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import avinash.distributeddownloadingsystem.Database.Download_Info;
@@ -27,12 +37,9 @@ import static avinash.distributeddownloadingsystem.Database.SQLiteHelper.COLUMN_
 import static avinash.distributeddownloadingsystem.Database.SQLiteHelper.COLUMN_URL;
 import static avinash.distributeddownloadingsystem.Database.SQLiteHelper.COLUMN_isADMIN;
 
-
-
 /**
  * Created by Avinash Sharma on 15-Apr-17.`
  */
-
 public class ManageDownloads extends Fragment {
     ArrayList<Download_Info> DownloadList;
     RecyclerView RV;
@@ -40,8 +47,10 @@ public class ManageDownloads extends Fragment {
 
     adapter DownloadAdapter;
     Context context;
-    public ManageDownloads ()
-    {
+    ArrayList<String> key, values;
+    String url = "192.168.43.38:3000/retrieve";
+
+    public ManageDownloads() {
 
     }
 
@@ -53,9 +62,9 @@ public class ManageDownloads extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.download_manage, container, false);
+        View view = inflater.inflate(R.layout.download_manage, container, false);
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.download_manage);
+        // setContentView(R.layout.download_manage);
         RV = (RecyclerView) view.findViewById(R.id.RV);
         DownloadList = new ArrayList<>();
         sq = new SQLiteHelper(view.getContext());
@@ -64,7 +73,8 @@ public class ManageDownloads extends Fragment {
         RV.setLayoutManager(new LinearLayoutManager(view.getContext()));
         RV.setAdapter(DownloadAdapter);
         context = view.getContext();
-
+        key = new ArrayList<>();
+        values = new ArrayList<>();
 
         return view;
 
@@ -75,8 +85,8 @@ public class ManageDownloads extends Fragment {
 
         c.moveToFirst();
         Download_Info obj;
-        int k=c.getCount();
-        Log.d("GL",String.valueOf(k));
+        int k = c.getCount();
+        Log.d("GL", String.valueOf(k));
         while (!c.isAfterLast()) {
             String Fname, URL, key;
             long id;
@@ -123,7 +133,7 @@ public class ManageDownloads extends Fragment {
     public class adapter extends RecyclerView.Adapter<VH> {
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-           // LayoutInflater LI = getLayoutInflater();
+            // LayoutInflater LI = getLayoutInflater();
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
             return new VH(v);
         }
@@ -131,7 +141,7 @@ public class ManageDownloads extends Fragment {
         @Override
         public void onBindViewHolder(VH holder, final int position) {
             final Download_Info obj = DownloadList.get(position);
-           // Log.d("RV",DownloadList.get(1).getFileName());
+            // Log.d("RV",DownloadList.get(1).getFileName());
             /*if(DownloadList.size()==1)
             Log.d("RV","t");
             else
@@ -142,8 +152,7 @@ public class ManageDownloads extends Fragment {
             //holder.size.setText("1GB");
             if (obj.getAdmin() != 0) {
                 holder.isAdmin.setText("ADMIN");
-            }
-            else {
+            } else {
                 holder.isAdmin.setText(" ");
                 holder.im.setVisibility(View.INVISIBLE);
             }
@@ -166,10 +175,10 @@ public class ManageDownloads extends Fragment {
                         }*/
                     Intent i = new Intent(context, Download_Details.class);
                     i.putExtra("Key", obj.getKey());
-                    i.putExtra("Admin",obj.getAdmin());
-                    i.putExtra("File",obj.getFileName());
-                    i.putExtra("URL",obj.getURL());
-                    i.putExtra("PartCount",obj.getPartCount());
+                    i.putExtra("Admin", obj.getAdmin());
+                    i.putExtra("File", obj.getFileName());
+                    i.putExtra("URL", obj.getURL());
+                    i.putExtra("PartCount", obj.getPartCount());
 
                     startActivity(i);
 
@@ -186,6 +195,5 @@ public class ManageDownloads extends Fragment {
             return DownloadList.size();
         }
     }
-
 
 }

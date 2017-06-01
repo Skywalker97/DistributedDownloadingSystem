@@ -103,12 +103,14 @@ public class InitiateDownload extends Fragment {
         HashMap<String,String> params = new HashMap<String,String>();
         params.put("url",url);
         params.put("parts",numOfRequests+"");
+        Log.i("here","here");
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
                 REQUEST_URL, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(context,"Hell yeah!"+response.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Hell yeah!",Toast.LENGTH_SHORT).show();
+                        Log.i("res",response.toString());
                         String name, ext, id, partCount;
                         try {
                            // Download_Info DI(response.getString("name"), response.getString("ext"), response.getString("_id"));
