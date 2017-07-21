@@ -100,7 +100,7 @@ public class InitiateDownload extends Fragment {
     private void makeRequest() {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        HashMap<String,String> params = new HashMap<String,String>();
+        HashMap<String,String> params = new HashMap <String,String>();
         params.put("url",url);
         params.put("parts",numOfRequests+"");
         Log.i("here","here");
